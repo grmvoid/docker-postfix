@@ -6,7 +6,17 @@ ENV POSTFIX_MAILNAME="localhost"
 ENV POSTFIX_MESSAGE_SIZE_LIMIT=15728640
 ENV POSTMASTER_ADDRESS="postmaster@localhost"
 
-COPY etc/* /etc/postfix/
+LABEL org.opencontainers.image.base.name="docker.io/library/alpine:3.21" \
+      org.opencontainers.image.description="Application packaged by grmvoid" \
+      org.opencontainers.image.documentation="https://github.com/grmvoid/docker-postfix/tree/master/README.md" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.ref.name="${POSTFIX_VERSION}" \
+      org.opencontainers.image.source="https://github.com/grmvoid/docker-postfix/tree/master/3.9" \
+      org.opencontainers.image.title="postfix" \
+      org.opencontainers.image.vendor="grmvoid" \
+      org.opencontainers.image.version="${POSTFIX_VERSION}"
+
+COPY etc/* /etc/
 
 RUN set -eux; \
     \
