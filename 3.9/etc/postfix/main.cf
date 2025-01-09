@@ -133,7 +133,7 @@ mail_owner = postfix
 #
 # Note: you need to stop/start Postfix when this parameter changes.
 #
-#inet_interfaces = all
+inet_interfaces = all
 #inet_interfaces = $myhostname
 #inet_interfaces = $myhostname, localhost
 
@@ -681,10 +681,18 @@ sample_directory = /etc/postfix
 
 # readme_directory: The location of the Postfix README files.
 #
-readme_directory = /usr/share/doc/postfix/readme
-inet_protocols = ipv4
+readme_directory = no
 shlib_directory = /usr/lib/postfix
 meta_directory = /etc/postfix
 
 alias_maps = lmdb:/etc/aliases
 alias_database = lmdb:/etc/aliases
+
+maillog_file=/dev/stdout
+mailbox_size_limit = 0
+
+milter_default_action = accept
+milter_protocol = 6
+
+non_smtpd_milters = inet:12301,inet:localhost:12301
+recipient_delimiter = +

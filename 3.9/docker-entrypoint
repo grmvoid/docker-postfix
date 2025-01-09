@@ -1,0 +1,33 @@
+#!/bin/sh
+
+if [ "$1" = 'postfix' ]; then
+    if [[ ! -f install.lock ]] || [[ $(< install.lock) != "${POSTFIX_MAILNAME}" ]]; then
+        echo "Generate Postfix configuration for ${POSTFIX_MAILNAME}"
+        postconf -e myorigin="${POSTFIX_MAILNAME}"
+        postconf -e myhostname="${POSTFIX_MAILNAME}"
+        postconf -e mydestination="${POSTFIX_MAILNAME}"
+        postconf -e message_size_limit="${POSTFIX_MESSAGE_SIZE_LIMIT}"
+
+        echo "Generate aliases for ${POSTFIX_MAILNAME}"
+        echo "root: ${POSTMASTER_ADDRESS}" > /etc/aliases; \
+        postalias /etc/aliases; \
+        newaliases
+
+        echo "Generate OpenDKIM configuration for ${POSTFIX_MAILNAME}"
+        mkdir -p "/etc/opendkim/keys/${POSTFIX_MAILNAME}"
+        opendkim-genkey --verbose --bits=1024 --selector=mail --directory="/etc/opendkim/keys/${POSTFIX_MAILNAME}"
+        chown -R opendkim:opendkim /etc/opendkim
+        echo "${POSTFIX_MAILNAME}" >> /etc/opendkim/TrustedHosts
+
+        echo "Generate OpenDMARC configuration for ${POSTFIX_MAILNAME}"
+        echo "localhost" > /etc/opendmarc/ignore.hosts
+        echo "AuthservID ${POSTFIX_MAILNAME}" >> /etc/opendmarc/opendmarc.conf
+        echo "TrustedAuthservIDs ${POSTFIX_MAILNAME}" >> /etc/opendmarc/opendmarc.conf
+    fi
+
+    opendmarc
+    opendkim
+    exec "$@"
+fi
+
+exec "$@"
