@@ -21,21 +21,17 @@ COPY docker-entrypoint /usr/local/bin/
 
 RUN set -eux; \
   \
-  # upgrade alpine \
-    apk update; \
-    apk upgrade; \
-    apk add --no-cache \
-    ca-certificates; \
-    update-ca-certificates; \
-  \
   # install deps
     apk add --no-cache \
-    mailx \
-    postfix=${POSTFIX_VERSION} \
-    postfix-pcre=${POSTFIX_VERSION} \
-    opendkim=2.11.0-r3 \
-    opendkim-utils=2.11.0-r3 \
-    opendmarc=1.4.2-r1;
+      postfix=${POSTFIX_VERSION} \
+      postfix-pcre=${POSTFIX_VERSION} \
+      opendkim=2.11.0-r3 \
+      opendkim-utils=2.11.0-r3 \
+      opendmarc=1.4.2-r1; \
+  # cleanup
+    rm -rf /var/cache/apk/* \
+      /tmp/* \
+      /var/tmp/*;
 
 VOLUME [ "/etc/postfix", "/var/spool/mail", "/etc/opendkim/keys" ]
 EXPOSE 25/tcp 587/tcp
