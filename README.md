@@ -13,7 +13,30 @@
 
 ## Supported tags and respective `Dockerfile` links
 
+- [`3.9.1`, `3.9`](https://github.com/grmvoid/docker-postfix/blob/master/3.9/Dockerfile)
+
 ## How to usage this image
+
+### start a postfix instance
+
+```bash
+docker run --name some-postfix -d grmvoid/postfix:3.9.1
+```
+
+### ... via [`docker-compose`](https://github.com/docker/compose)
+Example `docker-compose.yml` for `postfix`:
+
+```yaml
+version: '3.1'
+
+services:
+    postfix:
+        image: grmvoid/postfix:3.9.1
+        restart: always
+        ports:
+            - "25:25/tcp"
+            - "587:587/tcp"
+```
 
 ## LICENSE
 
